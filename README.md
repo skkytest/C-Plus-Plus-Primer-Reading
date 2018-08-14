@@ -2,4 +2,4 @@
 Reading and Summarizing of C++
 
 Chapter 2  -- done
-Chapter 12 -- finish 1&2
+Chapter 12 -- finish 12.1
