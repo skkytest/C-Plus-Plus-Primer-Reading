@@ -353,3 +353,28 @@ void f(destination &d /* other needed parameters */)
     // when f exits, even if by an exception, the connection will be properly closed
 }
 ```
+
+### 12.1.6 *weak_ptr*
+
+A weak\_ptr is a smart pointer that does not control the lifetime of the object to which it points. Instead, a weak\_ptr points to an object that is managed by a shared\_ptr. Binding a weak\_ptr to a shared\_ptr does not change the reference count of that shared\_ptr. 
+
+When we create a weak\_ptr, we initialize it from a shared\_ptr. Because the object might no longer exist, we cannot use a weak\_ptr to access its object directly. To access that object, we must call lock. The lock function checks whether the object to which the weak\_ptr points still exists. If so, lock returns a shared\_ptr to the shared object.
+
+```cpp
+auto p = make_shared<int>(42);
+weak_ptr<int> wp(p);  // wp weakly shares with p; use count in p is unchanged
+
+if (shared_ptr<int> np = wp.lock()) { // true if np is not null
+    // inside the if, np shares its object with p
+}
+```
+
+Why weak\_ptr? Check [Stack Overflow](https://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful).
+
+> A good example would be a cache.
+> For recently accessed objects, you want to keep them in memory, so you hold a strong pointer to them. Periodically, you scan the cache and decide which objects have not been accessed recently. You don't need to keep those in memory, so you get rid of the strong pointer.
+> But what if that object is in use and some other code holds a strong pointer to it? If the cache gets rid of its only pointer to the object, it can never find it again. So the cache keeps a weak pointer to objects that it needs to find if they happen to stay in memory.
+> 
+> std::weak\_ptr is a very good way to solve the dangling pointer problem. By just using raw pointers it is impossible to know if the referenced data has been deallocated or not. Instead, by letting a std::shared\_ptr manage the data, and supplying std::weak\_ptr to users of the data, the users can check validity of the data by calling expired() or lock().
+
+**check exercise 12\_19.h about example code of using weak\_ptr**
